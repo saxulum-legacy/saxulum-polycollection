@@ -1,12 +1,5 @@
 <?php
 
-/*
- * (c) Infinite Networks <http://www.infinite.net.au>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Saxulum\FormPolyCollection\Form\Type;
 
 use Saxulum\FormPolyCollection\Form\EventListener\ResizePolyFormListener;
@@ -18,21 +11,11 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-/**
- * A collection type that will take an array of other form types
- * to use for each of the classes in an inheritance tree.
- *
- * The collection allows you to use the form component to manipulate
- * objects that have a common parent, like Doctrine's single or
- * multi table inheritance strategies by registering different
- * types for each class in the inheritance tree.
- *
- * @author Tim Nagel <t.nagel@infinite.net.au>
- */
 class PolyCollectionType extends AbstractType
 {
     /**
-     * {@inheritdoc}
+     * @param FormBuilderInterface $builder
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -46,18 +29,15 @@ class PolyCollectionType extends AbstractType
             $options['options'],
             $options['allow_add'],
             $options['allow_delete'],
-            $options['type_name']
+            $options['delete_empty']
         );
 
         $builder->addEventSubscriber($resizeListener);
     }
 
     /**
-     * Builds prototypes for each of the form types used for the collection.
-     *
-     * @param \Symfony\Component\Form\FormBuilderInterface $builder
-     * @param array                                        $options
-     *
+     * @param  FormBuilderInterface $builder
+     * @param  array                $options
      * @return array
      */
     protected function buildPrototypes(FormBuilderInterface $builder, array $options)
@@ -70,6 +50,7 @@ class PolyCollectionType extends AbstractType
                 $builder,
                 $options['prototype_name'],
                 $type,
+                $key,
                 $options['options']
             );
             $prototypes[$key] = $prototype->getForm();
@@ -79,31 +60,38 @@ class PolyCollectionType extends AbstractType
     }
 
     /**
-     * Builds an individual prototype.
-     *
-     * @param \Symfony\Component\Form\FormBuilderInterface $builder
-     * @param string                                       $name
-     * @param string|FormTypeInterface                     $type
-     * @param array                                        $options
-     *
-     * @return \Symfony\Component\Form\FormBuilderInterface
+     * @param  FormBuilderInterface     $builder
+     * @param  string                   $name
+     * @param  FormTypeInterface|string $type
+     * @param string$key
+     * @param  array                    $options
+     * @return FormBuilderInterface
      */
-    protected function buildPrototype(FormBuilderInterface $builder, $name, $type, array $options)
+    protected function buildPrototype(FormBuilderInterface $builder, $name, $type, $key, array $options)
     {
         $prototype = $builder->create($name, $type, array_replace(array(
             'label' => $name . 'label__',
         ), $options));
 
+        $builder->add('_type', 'hidden', array(
+            'data'   => $key,
+            'mapped' => false
+        ));
+
         return $prototype;
     }
 
     /**
-     * {@inheritdoc}
+     * @param FormView      $view
+     * @param FormInterface $form
+     * @param array         $options
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['allow_add']    = $options['allow_add'];
-        $view->vars['allow_delete'] = $options['allow_delete'];
+        $view->vars = array_replace($view->vars, array(
+            'allow_add'    => $options['allow_add'],
+            'allow_delete' => $options['allow_delete'],
+        ));
 
         if ($form->getConfig()->hasAttribute('prototypes')) {
             $view->vars['prototypes'] = array_map(function (FormInterface $prototype) use ($view) {
@@ -113,7 +101,9 @@ class PolyCollectionType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * @param FormView      $view
+     * @param FormInterface $form
+     * @param array         $options
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
@@ -132,7 +122,7 @@ class PolyCollectionType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
@@ -147,8 +137,8 @@ class PolyCollectionType extends AbstractType
             'allow_delete'   => false,
             'prototype'      => true,
             'prototype_name' => '__name__',
-            'type_name'      => '_type',
             'options'        => array(),
+            'delete_empty'   => false,
         ));
 
         $resolver->setRequired(array(
@@ -165,10 +155,10 @@ class PolyCollectionType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getName()
     {
-        return 'saxulum_form_polycollection';
+        return 'saxulum_polycollection';
     }
 }

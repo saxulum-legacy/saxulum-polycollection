@@ -1,117 +1,58 @@
 <?php
 
-/*
- * (c) Infinite Networks <http://www.infinite.net.au>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Saxulum\FormPolyCollection\Form\EventListener;
 
-use Doctrine\Common\Util\ClassUtils;
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
+use Symfony\Component\Form\Exception\InvalidArgumentException;
 use Symfony\Component\Form\Extension\Core\EventListener\ResizeFormListener;
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
 
-/**
- * A Form Resize listener capable of coping with a polycollection.
- *
- * @author Tim Nagel <tim@nagel.com.au>
- */
 class ResizePolyFormListener extends ResizeFormListener
 {
     /**
-     * Stores an array of Types with the Type name as the key.
-     *
      * @var array
      */
     protected $typeMap = array();
 
     /**
-     * Stores an array of types with the Data Class as the key.
-     *
      * @var array
      */
     protected $classMap = array();
 
     /**
-     * Name of the hidden field identifying the type
-     *
-     * @var string
+     * @param  array                     $prototypes
+     * @param  array                     $options
+     * @param  bool                      $allowAdd
+     * @param  bool                      $allowDelete
+     * @param  bool                      $deleteEmpty
+     * @throws \InvalidArgumentException
      */
-    protected $typeFieldName;
-
-    /**
-     * @param array<FormInterface> $prototypes
-     * @param array $options
-     * @param bool $allowAdd
-     * @param bool $allowDelete
-     * @param string $typeFieldName
-     */
-    public function __construct(array $prototypes, array $options = array(), $allowAdd = false, $allowDelete = false, $typeFieldName = '_type')
+    public function __construct(array $prototypes, array $options = array(), $allowAdd = false, $allowDelete = false, $deleteEmpty = false)
     {
-        $this->typeFieldName = $typeFieldName;
-        $defaultType = null;
-
         foreach ($prototypes as $prototype) {
             /** @var FormInterface $prototype */
-            $modelClass = $prototype->getConfig()->getOption('model_class');
-            $type       = $prototype->getConfig()->getType()->getInnerType();
 
-            if (null === $defaultType) {
-                $defaultType = $type;
+            $dataClass = $prototype->getConfig()->getOption('data_class');
+            if (is_null($dataClass)) {
+                throw new \InvalidArgumentException("Only form types with data_class are supported!");
             }
 
-            $typeKey = $type instanceof FormTypeInterface ? $type->getName() : $type;
-            $this->typeMap[$typeKey] = $type;
-            $this->classMap[$modelClass] = $type;
+            $type = $prototype->getConfig()->getType()->getInnerType();
+            $key = $type instanceof FormTypeInterface ? $type->getName() : $type;
+
+            $this->typeMap[$key] = $type;
+            $this->classMap[$dataClass] = $type;
         }
 
-        parent::__construct($defaultType, $options, $allowAdd, $allowDelete);
+        parent::__construct(null, $options, $allowAdd, $allowDelete);
     }
 
     /**
-     * Returns the form type for the supplied object. If a specific
-     * form type is not found, it will return the default form type.
-     *
-     * @param  object $object
-     * @return string
+     * @param  FormEvent               $event
+     * @throws UnexpectedTypeException
      */
-    protected function getTypeForObject($object)
-    {
-        $class = get_class($object);
-
-        if(class_exists('Doctrine\\Common\\Util\\ClassUtils')) {
-            $class = ClassUtils::getRealClass($class);
-        }
-
-        if (array_key_exists($class, $this->classMap)) {
-            return $this->classMap[$class];
-        }
-
-        return $this->type;
-    }
-
-    /**
-     * Checks the form data for a hidden _type field that indicates
-     * the form type to use to process the data.
-     *
-     * @param  array                     $data
-     * @return string|FormTypeInterface
-     * @throws \InvalidArgumentException when _type is not present or is invalid
-     */
-    protected function getTypeForData(array $data)
-    {
-        if (!array_key_exists($this->typeFieldName, $data) || !array_key_exists($data[$this->typeFieldName], $this->typeMap)) {
-            throw new \InvalidArgumentException('Unable to determine the Type for given data');
-        }
-
-        return $this->typeMap[$data[$this->typeFieldName]];
-    }
-
     public function preSetData(FormEvent $event)
     {
         $form = $event->getForm();
@@ -139,11 +80,30 @@ class ResizePolyFormListener extends ResizeFormListener
         }
     }
 
-    public function preBind(FormEvent $event)
+    /**
+     * @param  object                   $object
+     * @return mixed
+     * @throws InvalidArgumentException
+     */
+    protected function getTypeForObject($object)
     {
-        $this->preSubmit($event);
+        if (!is_object($object)) {
+            throw new InvalidArgumentException("Data is not an object!");
+        }
+
+        $dataClass = get_class($object);
+
+        if (!array_key_exists($dataClass, $this->classMap)) {
+            throw new InvalidArgumentException("There is no form type for data_class '{$dataClass}'!");
+        }
+
+        return $this->classMap[$dataClass];
     }
 
+    /**
+     * @param  FormEvent               $event
+     * @throws UnexpectedTypeException
+     */
     public function preSubmit(FormEvent $event)
     {
         $form = $event->getForm();
@@ -177,5 +137,19 @@ class ResizePolyFormListener extends ResizeFormListener
                 }
             }
         }
+    }
+
+    /**
+     * @param  array                     $data
+     * @return FormTypeInterface|string
+     * @throws \InvalidArgumentException
+     */
+    protected function getTypeForData(array $data)
+    {
+        if (!array_key_exists('_type', $data) || !array_key_exists($data['_type'], $this->typeMap)) {
+            throw new InvalidArgumentException('Unable to determine the Type for given data');
+        }
+
+        return $this->typeMap[$data['_type']];
     }
 }

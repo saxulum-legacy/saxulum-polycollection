@@ -2,7 +2,7 @@
 
 namespace Saxulum\Tests\FormPolyCollection\Model;
 
-class AbstractModel
+abstract class AbstractModel
 {
     public $text;
 
