@@ -2,6 +2,7 @@
 
 namespace Saxulum\FormPolyCollection\Form\EventListener;
 
+use Doctrine\ORM\PersistentCollection;
 use Symfony\Component\Form\Exception\InvalidArgumentException;
 use Symfony\Component\Form\Extension\Core\EventListener\ResizeFormListener;
 use Symfony\Component\Form\FormEvent;
@@ -73,6 +74,8 @@ class ResizePolyFormListener extends ResizeFormListener
 
         // Then add all rows again in the correct order
         foreach ($data as $name => $value) {
+
+
             $type = $this->getTypeForObject($value);
             $form->add($name, $type, array_replace(array(
                 'property_path' => '['.$name.']',

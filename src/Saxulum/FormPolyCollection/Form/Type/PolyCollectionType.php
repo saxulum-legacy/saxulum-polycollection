@@ -73,7 +73,7 @@ class PolyCollectionType extends AbstractType
             'label' => $name . 'label__',
         ), $options));
 
-        $builder->add('_type', 'hidden', array(
+        $prototype->add('_type', 'hidden', array(
             'data'   => $key,
             'mapped' => false
         ));
