@@ -2,7 +2,6 @@
 
 namespace Saxulum\FormPolyCollection\Form\EventListener;
 
-use Doctrine\ORM\PersistentCollection;
 use Symfony\Component\Form\Exception\InvalidArgumentException;
 use Symfony\Component\Form\Extension\Core\EventListener\ResizeFormListener;
 use Symfony\Component\Form\FormEvent;
