@@ -74,8 +74,6 @@ class ResizePolyFormListener extends ResizeFormListener
 
         // Then add all rows again in the correct order
         foreach ($data as $name => $value) {
-
-
             $type = $this->getTypeForObject($value);
             $form->add($name, $type, array_replace(array(
                 'property_path' => '['.$name.']',
@@ -137,6 +135,10 @@ class ResizePolyFormListener extends ResizeFormListener
                     $form->add($name, $type, array_replace(array(
                         'property_path' => '['.$name.']',
                     ), $this->options));
+                    $form->get($name)->add('_type', 'hidden', array(
+                        'data'   => $value['_type'],
+                        'mapped' => false
+                    ));
                 }
             }
         }
