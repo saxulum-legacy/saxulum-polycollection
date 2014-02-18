@@ -1,6 +1,6 @@
 <?php
 
-namespace Saxulum\FormPolyCollection\DependencyInjection;
+namespace Saxulum\PolyCollection\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;

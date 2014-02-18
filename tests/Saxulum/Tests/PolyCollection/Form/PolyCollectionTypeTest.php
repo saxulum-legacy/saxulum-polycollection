@@ -1,11 +1,11 @@
 <?php
 
-namespace Saxulum\Tests\FormPolyCollection\Form;
+namespace Saxulum\Tests\PolyCollection\Form;
 
-use Saxulum\Tests\FormPolyCollection\Model\First;
-use Saxulum\Tests\FormPolyCollection\Model\Fourth;
-use Saxulum\Tests\FormPolyCollection\Model\Second;
-use Saxulum\Tests\FormPolyCollection\Model\Third;
+use Saxulum\Tests\PolyCollection\Model\First;
+use Saxulum\Tests\PolyCollection\Model\Fourth;
+use Saxulum\Tests\PolyCollection\Model\Second;
+use Saxulum\Tests\PolyCollection\Model\Third;
 use Symfony\Component\Form\Tests\Extension\Core\Type\TypeTestCase;
 
 class PolyCollectionTypeTest extends TypeTestCase

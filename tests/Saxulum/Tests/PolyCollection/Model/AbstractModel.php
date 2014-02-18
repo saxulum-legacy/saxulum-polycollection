@@ -1,6 +1,6 @@
 <?php
 
-namespace Saxulum\Tests\FormPolyCollection\Model;
+namespace Saxulum\Tests\PolyCollection\Model;
 
 abstract class AbstractModel
 {

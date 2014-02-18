@@ -1,12 +1,12 @@
 <?php
 
-namespace Saxulum\Tests\FormPolyCollection\Form;
+namespace Saxulum\Tests\PolyCollection\Form;
 
-use Saxulum\FormPolyCollection\Form\Type\PolyCollectionType;
-use Saxulum\Tests\FormPolyCollection\Form\Type\FirstType;
-use Saxulum\Tests\FormPolyCollection\Form\Type\FourthType;
-use Saxulum\Tests\FormPolyCollection\Form\Type\SecondType;
-use Saxulum\Tests\FormPolyCollection\Form\Type\ThirdType;
+use Saxulum\PolyCollection\Form\Type\PolyCollectionType;
+use Saxulum\Tests\PolyCollection\Form\Type\FirstType;
+use Saxulum\Tests\PolyCollection\Form\Type\FourthType;
+use Saxulum\Tests\PolyCollection\Form\Type\SecondType;
+use Saxulum\Tests\PolyCollection\Form\Type\ThirdType;
 use Symfony\Component\Form\AbstractExtension;
 
 /**

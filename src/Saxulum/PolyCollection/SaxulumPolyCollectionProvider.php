@@ -1,12 +1,12 @@
 <?php
 
-namespace Saxulum\FormPolyCollection;
+namespace Saxulum\PolyCollection;
 
 use Saxulum\BundleProvider\Provider\AbstractBundleProvider;
-use Saxulum\FormPolyCollection\Form\FormPolyCollectionExtension;
+use Saxulum\PolyCollection\Form\FormPolyCollectionExtension;
 use Silex\Application;
 
-class SaxulumFormPolyCollectionProvider extends AbstractBundleProvider
+class SaxulumPolyCollectionProvider extends AbstractBundleProvider
 {
     public function register(Application $app)
     {

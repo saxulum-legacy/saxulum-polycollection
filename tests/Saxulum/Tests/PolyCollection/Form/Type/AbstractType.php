@@ -1,6 +1,6 @@
 <?php
 
-namespace Saxulum\Tests\FormPolyCollection\Form\Type;
+namespace Saxulum\Tests\PolyCollection\Form\Type;
 
 use Symfony\Component\Form\AbstractType as BaseType;
 use Symfony\Component\Form\FormBuilderInterface;

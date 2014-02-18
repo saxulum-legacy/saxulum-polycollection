@@ -1,8 +1,8 @@
 <?php
 
-namespace Saxulum\FormPolyCollection\Form\Type;
+namespace Saxulum\PolyCollection\Form\Type;
 
-use Saxulum\FormPolyCollection\Form\EventListener\ResizePolyFormListener;
+use Saxulum\PolyCollection\Form\EventListener\ResizePolyFormListener;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
