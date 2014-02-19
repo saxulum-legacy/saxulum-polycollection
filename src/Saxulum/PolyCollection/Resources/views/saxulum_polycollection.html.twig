@@ -5,7 +5,7 @@
             {% for name, prototype in prototypes %}
                 {% set renderedPrototypes = renderedPrototypes|merge([{
                 'key': name,
-                'value': form_widget(prototype) ~ ' &nbsp;<a href="#" class="btn btn-danger btn-small" data-removefield="collection" data-field="__id__"><i class="icon-minus-sign icon-white"></i>remove</a>'
+                'value': form_widget(prototype) ~ ' &nbsp;<a class="btn btn-danger btn-small" data-removefield="collection" data-field="__id__"><i class="icon-minus-sign icon-white"></i>remove</a>'
                 }]) %}
             {% endfor %}
             {% if form.vars.allow_add %}
@@ -23,7 +23,7 @@
                         {{ form_widget(field) }}
                         {{ form_errors(field) }}
                         {% if form.vars.allow_delete %}
-                            &nbsp;<a href="#" class="btn btn-danger btn-small" data-removefield="collection" data-field="{{ field.vars.id }}"><i class="icon-minus-sign icon-white"></i> remove</a>
+                            &nbsp;<a class="btn btn-danger btn-small" data-removefield="collection" data-field="{{ field.vars.id }}"><i class="icon-minus-sign icon-white"></i> remove</a>
                         {% endif %}
                     </li>
                 {% endfor %}
