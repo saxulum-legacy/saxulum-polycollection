@@ -31,5 +31,6 @@
     },
     "autoload": {
         "psr-0": { "Saxulum\\PolyCollection": "src/" }
-    }
+    },
+    "abandoned": true
 }
